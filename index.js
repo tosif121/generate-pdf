@@ -1,6 +1,7 @@
 const express = require('express');
 const pdf = require('html-pdf');
 const cors = require('cors');
+const phantomjs = require('phantomjs-prebuilt');
 const app = express();
 const PORT = 5000;
 
@@ -22,7 +23,7 @@ app.post('/generate-pdf', (req, res) => {
       bottom: '1cm',
       left: '1cm',
     },
-    phantomPath: './node_modules/phantomjs-prebuilt/bin/phantomjs',
+    phantomPath: phantomjs.path
   };
 
   pdf.create(htmlContent, options).toBuffer((err, buffer) => {
