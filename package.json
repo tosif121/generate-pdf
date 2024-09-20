@@ -1,16 +1,16 @@
 {
-  "name": "pdf",
+  "name": "pdf-generator",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "PDF generator for Vercel",
+  "main": "api/generate-pdf.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.0",
-    "html-pdf": "^3.0.1"
+    "@vercel/node": "^2.15.3",
+    "puppeteer-core": "^20.7.3",
+    "chrome-aws-lambda": "^10.1.0"
   }
 }
