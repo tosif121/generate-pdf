@@ -22,7 +22,9 @@ app.post('/generate-pdf', (req, res) => {
       bottom: '1cm',
       left: '1cm',
     },
+    phantomPath: './node_modules/phantomjs-prebuilt/bin/phantomjs',
   };
+
   pdf.create(htmlContent, options).toBuffer((err, buffer) => {
     if (err) {
       console.error('Error generating PDF:', err.message);
