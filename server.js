@@ -2,26 +2,43 @@ const express = require('express');
 const pdf = require('html-pdf');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.post('/generate-pdf', (req, res) => {
-    const { htmlContent } = req.body;
+  const { htmlContent } = req.body;
 
-    const options = { format: 'A4' };
+  if (!htmlContent) {
+    return res.status(400).json({ error: 'HTML content is required' });
+  }
 
-    pdf.create(htmlContent, options).toBuffer((err, buffer) => {
-        if (err) {
-            console.error(err); // Log the error
-            return res.status(500).send('Error generating PDF');
-        }
-        res.setHeader('Content-Type', 'application/pdf');
-        res.send(buffer);
+  const options = {
+    format: 'A4',
+    border: {
+      top: '1cm',
+      right: '1cm',
+      bottom: '1cm',
+      left: '1cm',
+    },
+  };
+
+  pdf.create(htmlContent, options).toBuffer((err, buffer) => {
+    if (err) {
+      console.error('Error generating PDF:', err);
+      return res.status(500).json({ error: 'Failed to generate PDF' });
+    }
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Length': buffer.length,
     });
+
+    res.send(buffer);
+  });
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
