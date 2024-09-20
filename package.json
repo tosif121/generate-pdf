@@ -1,17 +1,16 @@
 {
-  "name": "pdf",
+  "name": "pdf-generator",
   "version": "1.0.0",
-  "description": "",
+  "description": "PDF generator using Puppeteer",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm install phantomjs-prebuilt"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.0",
-    "html-pdf": "^3.0.1",
-    "phantomjs-prebuilt": "^2.1.16"
+    "puppeteer": "^19.7.2"
   }
 }
