@@ -1,46 +1,50 @@
 const express = require('express');
-const pdf = require('html-pdf');
-const cors = require('cors');
-const phantomjs = require('phantomjs-prebuilt');
-const app = express();
-const PORT = 5000;
+   const pdf = require('html-pdf');
+   const cors = require('cors');
+   const path = require('path');
+   const app = express();
+   const PORT = 5000;
 
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+   app.use(cors());
+   app.use(express.json({ limit: '10mb' }));
 
-app.post('/generate-pdf', (req, res) => {
-  const { htmlContent } = req.body;
+   // Set PhantomJS path explicitly
+   const phantomJsPath = path.join(__dirname, 'node_modules', 'phantomjs-prebuilt', 'lib', 'phantom', 'bin', 'phantomjs.exe');
 
-  if (!htmlContent) {
-    return res.status(400).json({ error: 'HTML content is required' });
-  }
+   app.post('/generate-pdf', (req, res) => {
+     const { htmlContent } = req.body;
 
-  const options = {
-    format: 'A4',
-    border: {
-      top: '1cm',
-      right: '1cm',
-      bottom: '1cm',
-      left: '1cm',
-    },
-    phantomPath: phantomjs.path
-  };
+     if (!htmlContent) {
+       return res.status(400).json({ error: 'HTML content is required' });
+     }
 
-  pdf.create(htmlContent, options).toBuffer((err, buffer) => {
-    if (err) {
-      console.error('Error generating PDF:', err.message);
-      return res.status(500).json({ error: 'Failed to generate PDF', details: err.message });
-    }
+     const options = {
+       format: 'A4',
+       border: {
+         top: '1cm',
+         right: '1cm',
+         bottom: '1cm',
+         left: '1cm',
+       },
+       phantomPath: phantomJsPath
+     };
 
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Length': buffer.length,
-    });
+     pdf.create(htmlContent, options).toBuffer((err, buffer) => {
+       if (err) {
+         console.error('Error generating PDF:', err);
+         return res.status(500).json({ error: 'Failed to generate PDF', details: err.message, stack: err.stack });
+       }
 
-    res.send(buffer);
-  });
-});
+       res.set({
+         'Content-Type': 'application/pdf',
+         'Content-Length': buffer.length,
+       });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+       res.send(buffer);
+     });
+   });
+
+   app.listen(PORT, () => {
+     console.log(`Server is running on http://localhost:${PORT}`);
+     console.log('PhantomJS path:', phantomJsPath);
+   });
