@@ -23,11 +23,10 @@ app.post('/generate-pdf', (req, res) => {
       left: '1cm',
     },
   };
-
   pdf.create(htmlContent, options).toBuffer((err, buffer) => {
     if (err) {
-      console.error('Error generating PDF:', err);
-      return res.status(500).json({ error: 'Failed to generate PDF' });
+      console.error('Error generating PDF:', err.message);
+      return res.status(500).json({ error: 'Failed to generate PDF', details: err.message });
     }
 
     res.set({
